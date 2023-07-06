@@ -5,6 +5,8 @@ const overview = document.querySelector(".overview");
 
 const username = "learningcoding2022"; 
 
+const repoList = document.querySelector(".repo-list");
+
 //fetch API JSON Data
 
 //create and name an async function to fetch information from your GitHub profile
@@ -33,9 +35,30 @@ const showUserData = function (data) {
             <p><strong>Location:</strong> ${data.location}</p>
             <p><strong>Number of public repos:</strong> ${data.public_repos}</p>
         </div> 
-        `
+    `;
     // append the div to the overview element
     overview.append(div);
     //use json file to grab specific data/properties
-}
+    gitRepos();
+};
 
+//create and anem a new asynch function to fetch your repos
+const gitRepos = async function () {
+    const fetchRepos = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+    //how do you get the endpoints used above??
+    const repoData = await fetchRepos.json();
+    //which const do I logout to make sure the code is retrieving the repos?
+    displayRepoInfo(repoData);
+};
+
+//display info about your repos
+const displayRepoInfo = function (repos) {
+    //where does the const repos come from?
+    //inside the function, loop and create a list item for each repo and give each item: a class, h3
+    for (const repo of repos) {
+        const repoItem = document.createElement("li");
+        repoItem.classList.add("repo");
+        repoItem.innerHTML = `<h3>${repo.name}</h3>`;
+        repoList.append(repoItem);
+    }
+};
