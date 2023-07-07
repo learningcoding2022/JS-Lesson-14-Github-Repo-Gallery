@@ -7,6 +7,12 @@ const username = "learningcoding2022";
 
 const repoList = document.querySelector(".repo-list");
 
+//variable selects the section with a class of "repos" where all your repo information appears
+const selectsRepos = document.querySelector(".repos");
+
+//variable selects the sections with a class of "repo-data" where the individual repo data will appear
+const selectsRepoData = document.querySelector(".repo-data");
+
 //fetch API JSON Data
 
 //create and name an async function to fetch information from your GitHub profile
@@ -62,3 +68,62 @@ const displayRepoInfo = function (repos) {
         repoList.append(repoItem);
     }
 };
+
+//add a click event
+repoList.addEventListener("click", function (e) {
+    if (e.target.matches("h3")) {
+        const repoName = e.target.innerText;
+        //why is the = e.target.innerText??
+        //console.log(repoName);
+        getRepoInfo(repoName);
+    }
+}
+);
+
+
+//create a function to get specific repo info
+const getRepoInfo = async function (repoName) {
+    //In the function, make a fetch request to grab information about the specific repository.
+    const fetchInfo = await fetch(`https://api.github.com/repos/${username}/${repoName}`);
+    const repoInfo = await fetchInfo.json();
+    console.log(repoInfo);
+    //create an array of languages 
+    //create a variable called fetchLanguagues to fetch data from language_url property of your repoInfo
+    const fetchLanguages = await fetch(repoInfo.languages_url);
+    //create a variable called languageData to save the JSON response
+    const languageData = await fetchLanguages.json();
+    console.log(languageData);
+    //when tested this pulled up all properties rather than just the languages
+
+    //add each language to an empty array called languages- make a list of languages
+    const languages = [];
+    //the language data is an object- you'll want to loop through an object to add the languages to the end of the array
+    for (const language in languageData) {
+        languages.push(language);
+    }
+    
+    displaySpecificRepoInfo(repoInfo, languages);
+};
+
+const displaySpecificRepoInfo = function (repoInfo, languages) {
+    //empty the HTML of the section with a class of "repo-data"
+    repoData.innerHTML = "";
+    //Unhide (show) the “repo-data” element. 
+    repoData.classList.remove("hide");
+    //Hide the element with the class of “repos”.
+    selectsRepos.classList.add("hide");
+    //create a new div element and add the selected repository's name, description, default branch, and link to its code on GitHub
+    const div = document.createElement("div");
+    div.innerHTML = `
+        <h3>Name: ${repoInfo.name}</h3>
+        <p>Description: ${repoInfo.description}</p>
+        <p>Default Branch: ${repoInfo.default_branch}</p>
+        <p>Languages: ${languages.join(", ")}</p>
+        <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>
+    `;
+    repoData.append(div);
+};
+
+
+
+
