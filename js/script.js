@@ -26,19 +26,28 @@ const filterInput = document.querySelector(".filter-repos");
 //create and name an async function to fetch information from your GitHub profile
 const getGitData = async function () {
     const gitData  = await fetch (`https://api.github.com/users/${username}`); 
-    //convert from json file to javascript object in order to manipulate data and display on webpage
+    //resolve the JSON response and convert from json file to javascript object in order to manipulate data and display on webpage
     const data = await gitData.json();
+    //console.log(data); 
+    //want to message out data because this holds the information I fetched
     showUserData(data);
+    //this calls the display function, but why here?
+  
 };
 
 getGitData();
 
-//fetch and display user info
-//name a new function to display the fetched user information on the page. This function should accept the JSON data as a parameter.
+//fetch and ***display my user info (rather than just general profile info)
+//name a new function to display the fetched user (my user info) information on the page. This function should accept the JSON data as a parameter.
 const showUserData = function (data) {
 //Inside the function, create a new div and give it a class of “user-info”. 
+//we are creating a list of my user info
+    //create a new div
     const div = document.createElement("div");
+    //give the new div a class of "user-info"
     div.classList.add("user-info");
+    //use the JSON data to grab the relevant properties to display on the page
+    //grabs the info you want to display
     div.innerHTML = `
         <figure>
             <img alt="user avatar" src=${data.avatar_url} />
@@ -51,26 +60,33 @@ const showUserData = function (data) {
         </div> 
     `;
     // append the div to the overview element
+    //aka this makes the list, but it won't show up yet because you still need to call the function
     overview.append(div);
     //use json file to grab specific data/properties
     gitRepos(username);
+    //how do you know to use this function??
 };
 
-//create and anem a new asynch function to fetch your repos
+//now we need to get the repo information to eventually display (we already got the user info and made a list of this to display)
+//create and name a new async function to fetch/get your repos
 const gitRepos = async function (username) {
     const fetchRepos = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
-    //how do you get the endpoints used above??
+    //researched the endpoints above and added parameters to sort the repos by the most recently updated to last updated and show up to 100 repos per page at a time
     const selectsRepoData = await fetchRepos.json();
-    //which const do I logout to make sure the code is retrieving the repos?
+    //this is asking the computer to wait for this data
+    //which const do I logout to make sure the code is retrieving the repos and look for properties I will need?
+    //is it console.log(selectsRepoData); ?
     displayRepoInfo(selectsRepoData);
+    //where does this function come from (step 3 of 7)???? how can I explain this??
 };
 
-//display info about your repos
+//now that I have gotten the repo info, I need to display the info about my repos
+//why is repos used as a parameter? (use repos as a parameter so that the function accepts the data returned from your last API call)
 const displayRepoInfo = function (repos) {
     //at the top of the function that displays your repos show the filterInput element
     filterInput.classList.remove("hide");
-    //where does the const repos come from?
     //inside the function, loop and create a list item for each repo and give each item: a class, h3
+    //below I'm giving each repo a class and an h3 and then adding it to an unordered repos list
     for (const repo of repos) {
         const repoItem = document.createElement("li");
         repoItem.classList.add("repo");
@@ -79,23 +95,26 @@ const displayRepoInfo = function (repos) {
     }
 };
 
-//add a click event
+//add a click event to show repo information when someone clicks on a title of one
 repoList.addEventListener("click", function (e) {
+//how do you know to include (e) in this function?
     if (e.target.matches("h3")) {
         const repoName = e.target.innerText;
-        //why is the = e.target.innerText??
+        ////why is the = e.target.innerText?? what does this do?
         //console.log(repoName);
         getRepoInfo(repoName);
+        ////why does this function go here?
     }
 }
 );
 
-//create a function to get specific repo info
+//create a function to get specific repo info (to provide the repo description when you click on the repo)
 const getRepoInfo = async function (repoName) {
     //In the function, make a fetch request to grab information about the specific repository.
     const fetchInfo = await fetch(`https://api.github.com/repos/${username}/${repoName}`);
+    //how do you know to put {repoName} instead of {repo} (listed on github page)
     const repoInfo = await fetchInfo.json();
-    //console.log(repoInfo);
+    //console.log(repoInfo); this allows you to see the information grabbed/fetched
     //create an array of languages 
     //create a variable called fetchLanguagues to fetch data from language_url property of your repoInfo
     const fetchLanguages = await fetch(repoInfo.languages_url);
@@ -169,3 +188,4 @@ filterInput.addEventListener("input", function (e) {
     }
 });
 
+//Create a gh-pages branch in your repo to host your project on GitHub Pages.
