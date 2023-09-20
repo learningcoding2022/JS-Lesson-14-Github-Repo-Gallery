@@ -40,7 +40,7 @@ getGitData();//need to run a function outside of itself 1x for it to work (can't
 
 //fetch and ***display my user info (rather than just general profile info)
 //name a new function to display the fetched user (my user info) information on the page. This function should accept the JSON data as a parameter.
-const showUserData = function (data) //data is a parameter {
+const showUserData = function (data) { //data is a parameter {
 //Inside the function, create a new div and give it a class of “user-info”. 
 //we are creating a list of my user info
     //create a new div
@@ -193,4 +193,21 @@ filterInput.addEventListener("input", function (e) {
     }
 });
 
-//Create a gh-pages branch in your repo to host your project on GitHub Pages.
+//Solution Code
+// // Dynamic search
+filterInput.addEventListener("input", function (e) {
+    const searchText = e.target.value;
+    const repos = document.querySelectorAll(".repo");
+    const searchLowerText = searchText.toLowerCase();
+  
+    for (const repo of repos) {
+      const repoLowerText = repo.innerText.toLowerCase();
+      if (repoLowerText.includes(searchLowerText)) {
+        repo.classList.remove("hide");
+      } else {
+        repo.classList.add("hide");
+      }
+    }
+  });
+
+  //adding in a comment to code
